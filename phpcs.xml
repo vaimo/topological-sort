@@ -6,11 +6,10 @@
 <ruleset name="LOCAL">
     <description>My rules for PHP CodeSniffer</description>
     
-    <!-- Run against the PHPCompatibility ruleset -->
     <rule ref="PHPCompatibility" />
-    
-    <config name="testVersion" value="5.3-"/>
 
-    <!-- Run against a second ruleset -->
+    <config name="testVersion" value="5.3-"/>
+    
+    <rule ref="PSR1"/>
     <rule ref="PSR2"/>
 </ruleset>
