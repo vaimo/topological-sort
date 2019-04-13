@@ -1,10 +1,13 @@
 <?php
+/**
+ * Copyright © Marc J. Schmidt. All rights reserved.
+ * See LICENSE.txtvisit for license details.
+ */
+namespace Vaimo\TopSort\Implementations;
 
-namespace MJS\TopSort\Implementations;
-
-use MJS\TopSort\CircularDependencyException;
-use MJS\TopSort\ElementNotFoundException;
-use MJS\TopSort\TopSortInterface;
+use Vaimo\TopSort\CircularDependencyException;
+use Vaimo\TopSort\ElementNotFoundException;
+use Vaimo\TopSort\TopSortInterface;
 
 /**
  * A topological sort implementation based on php arrays.
@@ -50,6 +53,8 @@ class ArraySort extends BaseImplementation implements TopSortInterface
     }
 
     /**
+     * @SuppressWarnings(PHPMD.StaticAccess)
+     *
      * Visits $element and handles it dependencies, queues to internal sorted list in the right order.
      *
      * @param object   $element
@@ -62,20 +67,20 @@ class ArraySort extends BaseImplementation implements TopSortInterface
     {
         $this->throwCircularExceptionIfNeeded($element, $parents);
 
-        // If element has not been visited
         if (!$element->visited) {
             $parents[$element->id] = true;
 
-            // Set that element has been visited
             $element->visited = true;
 
             foreach ($element->dependencies as $dependency) {
                 if (isset($this->elements[$dependency])) {
                     $newParents = $parents;
                     $this->visit($this->elements[$dependency], $newParents);
-                } else {
-                    throw ElementNotFoundException::create($element->id, $dependency);
+                    
+                    continue;
                 }
+                
+                throw ElementNotFoundException::create($element->id, $dependency);
             }
 
             $this->addToList($element);
@@ -91,7 +96,7 @@ class ArraySort extends BaseImplementation implements TopSortInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function sort()
     {

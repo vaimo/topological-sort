@@ -1,13 +1,16 @@
 <?php
+/**
+ * Copyright © Marc J. Schmidt. All rights reserved.
+ * See LICENSE.txt for license details.
+ */
+namespace Vaimo\TopSort\Tests;
 
-namespace MJS\TopSort\Tests;
-
-use MJS\TopSort\CircularDependencyException;
-use MJS\TopSort\ElementNotFoundException;
-use MJS\TopSort\Implementations\ArraySort;
-use MJS\TopSort\Implementations\FixedArraySort;
-use MJS\TopSort\Implementations\StringSort;
-use MJS\TopSort\TopSortInterface;
+use Vaimo\TopSort\CircularDependencyException;
+use Vaimo\TopSort\ElementNotFoundException;
+use Vaimo\TopSort\Implementations\ArraySort;
+use Vaimo\TopSort\Implementations\FixedArraySort;
+use Vaimo\TopSort\Implementations\StringSort;
+use Vaimo\TopSort\TopSortInterface;
 
 class SimpleSortTest extends \PHPUnit_Framework_TestCase
 {
@@ -23,7 +26,7 @@ class SimpleSortTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider             provideImplementations
-     * @expectedException        \MJS\TopSort\CircularDependencyException
+     * @expectedException        \Vaimo\TopSort\CircularDependencyException
      * @expectedExceptionMessage Circular dependency found: car1->owner1->car1
      *
      * @param TopSortInterface $sorter
@@ -52,7 +55,7 @@ class SimpleSortTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider             provideImplementations
-     * @expectedException        \MJS\TopSort\ElementNotFoundException
+     * @expectedException        \Vaimo\TopSort\ElementNotFoundException
      * @expectedExceptionMessage Dependency `car2` not found, required by `owner1`
      *
      * @param TopSortInterface $sorter
@@ -80,7 +83,7 @@ class SimpleSortTest extends \PHPUnit_Framework_TestCase
         try {
             $sorter->sort();
             $this->fail('This must fail');
-        } catch(CircularDependencyException $e) {
+        } catch (CircularDependencyException $e) {
             $this->assertEquals(array('car1', 'owner1', 'brand1'), $e->getNodes());
             $this->assertEquals('car1', $e->getStart());
             $this->assertEquals('brand1', $e->getEnd());
@@ -96,7 +99,7 @@ class SimpleSortTest extends \PHPUnit_Framework_TestCase
     {
         $sorter->setThrowCircularDependency(true);
         $intercepted = false;
-        $sorter->setCircularInterceptor(function() use (&$intercepted) {
+        $sorter->setCircularInterceptor(function () use (&$intercepted) {
             $intercepted = true;
         });
         $sorter->add('car1', array('owner1'));
@@ -109,7 +112,13 @@ class SimpleSortTest extends \PHPUnit_Framework_TestCase
 
     public function testConstructor()
     {
-        $elements = array('car1' => array('brand1'), 'car2' => array('brand2'), 'brand1' => array(), 'brand2' => array());
+        $elements = array(
+            'car1' => array('brand1'),
+            'car2' => array('brand2'),
+            'brand1' => array(),
+            'brand2' => array()
+        );
+
         $sorter = new ArraySort($elements, true);
         $this->assertTrue($sorter->isThrowCircularDependency());
         $this->assertEquals(array('brand1', 'car1', 'brand2', 'car2'), $sorter->sort());
@@ -131,7 +140,7 @@ class SimpleSortTest extends \PHPUnit_Framework_TestCase
         try {
             $sorter->sort();
             $this->fail('This must fail');
-        } catch(ElementNotFoundException $e) {
+        } catch (ElementNotFoundException $e) {
             $this->assertEquals('owner1', $e->getSource());
             $this->assertEquals('car2', $e->getTarget());
         }

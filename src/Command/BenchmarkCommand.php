@@ -1,5 +1,9 @@
 <?php
-namespace MJS\TopSort\Command;
+/**
+ * Copyright © Marc J. Schmidt. All rights reserved.
+ * See LICENSE.txt for license details.
+ */
+namespace Vaimo\TopSort\Command;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
@@ -22,11 +26,16 @@ class BenchmarkCommand extends Command
 
     protected function configure()
     {
-        $this
-            ->setName('benchmark')
-        ;
+        $this->setName('benchmark');
     }
 
+    /**
+     *  @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     *
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @return int|void|null
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->testSimpleCount($output);
@@ -35,12 +44,12 @@ class BenchmarkCommand extends Command
 
     protected function testGroupCount($output)
     {
-        $this->test(['GroupedArraySort', 'GroupedStringSort'], $output);
+        $this->test(array('GroupedArraySort', 'GroupedStringSort'), $output);
     }
 
     protected function testSimpleCount($output)
     {
-        $this->test(['FixedArraySort', 'ArraySort', 'StringSort'], $output);
+        $this->test(array('FixedArraySort', 'ArraySort', 'StringSort'), $output);
     }
 
     protected function test($classes, OutputInterface $output)
@@ -53,7 +62,6 @@ class BenchmarkCommand extends Command
         $this->process = new ProgressBar($output, count($counts));
         $this->process->start();
         foreach ($counts as $count) {
-
             foreach ($classes as $class) {
                 if ($count === 1000000 && $class === 'GroupedArraySort') {
                     continue;
@@ -75,7 +83,6 @@ class BenchmarkCommand extends Command
                         sprintf('%6.4fs', $data['time'])
                     )
                 );
-
             }
 
             $this->process->advance();

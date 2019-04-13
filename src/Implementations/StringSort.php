@@ -1,9 +1,12 @@
 <?php
+/**
+ * Copyright © Marc J. Schmidt. All rights reserved.
+ * See LICENSE.txt for license details.
+ */
+namespace Vaimo\TopSort\Implementations;
 
-namespace MJS\TopSort\Implementations;
-
-use MJS\TopSort\CircularDependencyException;
-use MJS\TopSort\ElementNotFoundException;
+use Vaimo\TopSort\CircularDependencyException;
+use Vaimo\TopSort\ElementNotFoundException;
 
 /**
  * A topological sort implementation based on string manipulations.
@@ -24,7 +27,7 @@ class StringSort extends ArraySort
     protected $delimiter = "\0";
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     protected function addToList($element)
     {
@@ -32,13 +35,20 @@ class StringSort extends ArraySort
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function sort()
     {
         return explode($this->delimiter, rtrim($this->doSort(), $this->delimiter));
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.StaticAccess)
+     *
+     * @param object $element
+     * @param null|bool[] $parents
+     * @throws CircularDependencyException
+     */
     protected function visit($element, &$parents = null)
     {
         $this->throwCircularExceptionIfNeeded($element, $parents);
@@ -49,17 +59,16 @@ class StringSort extends ArraySort
             $element->visited = true;
 
             foreach ($element->dependencies as $dependency) {
-                if (isset($this->elements[$dependency])) {
-                    $newParents = $parents;
-                    $this->visit($this->elements[$dependency], $newParents);
-                } else {
+                if (!isset($this->elements[$dependency])) {
                     throw ElementNotFoundException::create($element->id, $dependency);
                 }
+
+                $newParents = $parents;
+                $this->visit($this->elements[$dependency], $newParents);
             }
 
             $this->addToList($element);
         }
-
     }
 
     /**

@@ -1,4 +1,8 @@
 #!/bin/bash
+: <<'COPYRIGHT'
+ Copyright (c) Marc J. Schmidt. All rights reserved.
+ See LICENSE.txt for license details.
+COPYRIGHT
 
 if [ "$TRAVIS_PHP_VERSION" != "hhvm" ]; then
     vendor/bin/test-reporter --stdout > codeclimate.json

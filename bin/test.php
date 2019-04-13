@@ -1,5 +1,8 @@
 <?php
-
+/**
+ * Copyright © Marc J. Schmidt. All rights reserved.
+ * See LICENSE.txt for license details.
+ */
 require __DIR__ . '/../vendor/autoload.php';
 
 $class = $argv[1];
@@ -29,7 +32,7 @@ function getElementsGroup($count) {
 
 $elements = 0 === strpos($class, 'Grouped') ? getElementsGroup($count) : getElementsFlat($count);
 
-$class = '\MJS\TopSort\Implementations\\' . $class;
+$class = '\Vaimo\TopSort\Implementations\\' . $class;
 $sorted = new $class($elements);
 
 $start = microtime(true);

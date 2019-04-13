@@ -1,6 +1,9 @@
 <?php
-
-namespace MJS\TopSort;
+/**
+ * Copyright © Marc J. Schmidt. All rights reserved.
+ * See LICENSE.txt for license details.
+ */
+namespace Vaimo\TopSort;
 
 /**
  * The actual TopSort Interface.
@@ -49,5 +52,4 @@ interface TopSortInterface
      * @return boolean
      */
     public function isThrowCircularDependency();
-
 }

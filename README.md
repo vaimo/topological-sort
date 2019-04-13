@@ -1,5 +1,8 @@
 # Topological Sort / Dependency resolver in PHP
 
+**NOTE: this is a direct copy of the marcj/topsort with the only difference being the guaranteed compatibility 
+with PHP 5.3**
+
 [![Build Status](https://travis-ci.org/marcj/topsort.php.svg)](https://travis-ci.org/marcj/topsort.php)
 [![Code Climate](https://codeclimate.com/github/marcj/topsort.php/badges/gpa.svg?)](https://codeclimate.com/github/marcj/topsort.php)
 [![Test Coverage](https://codeclimate.com/github/marcj/topsort.php/badges/coverage.svg?)](https://codeclimate.com/github/marcj/topsort.php)

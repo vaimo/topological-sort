@@ -1,6 +1,9 @@
 <?php
-
-namespace MJS\TopSort\Implementations;
+/**
+ * Copyright © Marc J. Schmidt. All rights reserved.
+ * See LICENSE.txt for license details.
+ */
+namespace Vaimo\TopSort\Implementations;
 
 /**
  * Implements grouped topological-sort based on string manipulation.
@@ -17,42 +20,44 @@ class GroupedStringSort extends GroupedArraySort
      */
     protected function injectElement($element, $minLevel)
     {
-        if ($group = $this->getFirstGroup($element->type, $minLevel)) {
-            //add this element into a group
+        $group = $this->getFirstGroup($element->type, $minLevel);
+        
+        if ($group) {
             $this->addItemAt($group, $element);
             $group->length++;
-
-            //increase all following groups +1
-            $i = $group->position;
+            
+            $position = $group->position;
+            
             foreach ($this->groups as $tempGroup) {
-                if ($tempGroup->position > $i) {
+                if ($tempGroup->position > $position) {
                     $tempGroup->position += strlen($element->id . $this->delimiter);
                 }
             }
 
             $element->addedAtLevel = $group->level;
-        } else {
-            //just append this element at the end
-            $group = (object)array(
-                'type' => $element->type,
-                'level' => $this->groupLevel,
-                'position' => $this->position,
-                'length' => 1,
-                'sorted' => ''
-            );
-            $this->groups[] = $group;
-            $element->addedAtLevel = $this->groupLevel;
-
-            $id = $element->id . $this->delimiter;
-
-            $group->sorted .= $id;
-            $this->position += strlen($id);
-            $this->groupLevel++;
+            
+            return;
         }
+
+        $group = (object)array(
+            'type' => $element->type,
+            'level' => $this->groupLevel,
+            'position' => $this->position,
+            'length' => 1,
+            'sorted' => ''
+        );
+        $this->groups[] = $group;
+        $element->addedAtLevel = $this->groupLevel;
+
+        $elementReference = $element->id . $this->delimiter;
+
+        $group->sorted .= $elementReference;
+        $this->position += strlen($elementReference);
+        $this->groupLevel++;
     }
 
     /**
-     * @param integer $position
+     * @param object $group
      * @param object  $element
      */
     public function addItemAt($group, $element)
@@ -61,7 +66,7 @@ class GroupedStringSort extends GroupedArraySort
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function sort()
     {
@@ -75,27 +80,30 @@ class GroupedStringSort extends GroupedArraySort
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function getGroups()
     {
         $position = 0;
-        return array_map(function($group) use (&$position) {
+        
+        return array_map(function ($group) use (&$position) {
             $groupCloned = clone $group;
             $groupCloned->position = $position;
+            
             unset($groupCloned->sorted);
+            
             $position += $groupCloned->length;
+            
             return $groupCloned;
         }, $this->groups);
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function doSort()
     {
         if ($this->sorted) {
-            //reset state when already executed
             foreach ($this->elements as $element) {
                 $element->visited = false;
             }

@@ -1,9 +1,12 @@
 <?php
+/**
+ * Copyright © Marc J. Schmidt. All rights reserved.
+ * See LICENSE.txt for license details.
+ */
+namespace Vaimo\TopSort\Implementations;
 
-namespace MJS\TopSort\Implementations;
-
-use MJS\TopSort\CircularDependencyException;
-use MJS\TopSort\ElementNotFoundException;
+use Vaimo\TopSort\CircularDependencyException;
+use Vaimo\TopSort\ElementNotFoundException;
 
 /**
  * A topological sort implementation based on fixed php arrays (\SplFixedArray).
@@ -18,7 +21,7 @@ class FixedArraySort extends ArraySort
     protected $position = 0;
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     protected function addToList($element)
     {
@@ -26,7 +29,7 @@ class FixedArraySort extends ArraySort
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function sort()
     {

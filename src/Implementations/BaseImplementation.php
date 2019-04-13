@@ -1,27 +1,34 @@
 <?php
+/**
+ * Copyright © Marc J. Schmidt. All rights reserved.
+ * See LICENSE.txt for license details.
+ */
+namespace Vaimo\TopSort\Implementations;
 
-
-namespace MJS\TopSort\Implementations;
-
-
-use MJS\TopSort\CircularDependencyException;
+use Vaimo\TopSort\CircularDependencyException;
 
 abstract class BaseImplementation
 {
     /**
      * @var bool
      */
-    protected $throwCircularDependency = true;
+    protected $detectCircularRefs = true;
 
     /**
      * @var callable
      */
     protected $circularInterceptor;
 
-    public function __construct(array $elements = array(), $throwCircularDependency = true)
+    /**
+     * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
+     *
+     * @param array $elements
+     * @param bool $detectCircularRefs
+     */
+    public function __construct(array $elements = array(), $detectCircularRefs = true)
     {
         $this->set($elements);
-        $this->throwCircularDependency = $throwCircularDependency;
+        $this->detectCircularRefs = $detectCircularRefs;
     }
 
     /**
@@ -35,6 +42,8 @@ abstract class BaseImplementation
     abstract public function set(array $elements);
 
     /**
+     * @SuppressWarnings(PHPMD.StaticAccess)
+     *
      * @param object   $element
      * @param object[] $parents
      *
@@ -47,15 +56,14 @@ abstract class BaseImplementation
         }
 
         if (isset($parents[$element->id])) {
-
             $nodes = array_keys($parents);
             $nodes[] = $element->id;
 
-            if ($this->circularInterceptor) {
-                call_user_func($this->circularInterceptor, $nodes);
-            } else {
+            if (!$this->circularInterceptor) {
                 throw CircularDependencyException::create($nodes);
             }
+
+            call_user_func($this->circularInterceptor, $nodes);
         }
     }
 
@@ -64,14 +72,14 @@ abstract class BaseImplementation
      */
     public function isThrowCircularDependency()
     {
-        return $this->throwCircularDependency;
+        return $this->detectCircularRefs;
     }
 
     /**
-     * @param boolean $throwCircularDependency
+     * @param boolean $detectCircularRefs
      */
-    public function setThrowCircularDependency($throwCircularDependency)
+    public function setThrowCircularDependency($detectCircularRefs)
     {
-        $this->throwCircularDependency = $throwCircularDependency;
+        $this->detectCircularRefs = $detectCircularRefs;
     }
 }

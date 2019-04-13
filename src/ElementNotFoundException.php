@@ -1,6 +1,9 @@
 <?php
-
-namespace MJS\TopSort;
+/**
+ * Copyright © Marc J. Schmidt. All rights reserved.
+ * See LICENSE.txt for license details.
+ */
+namespace Vaimo\TopSort;
 
 class ElementNotFoundException extends \Exception
 {

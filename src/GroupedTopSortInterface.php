@@ -1,6 +1,9 @@
 <?php
-
-namespace MJS\TopSort;
+/**
+ * Copyright © Marc J. Schmidt. All rights reserved.
+ * See LICENSE.txt for license details.
+ */
+namespace Vaimo\TopSort;
 
 /**
  * The actual TopSort Interface
@@ -100,7 +103,7 @@ interface GroupedTopSortInterface
     /**
      * When active the sorter creates a new group when a element has a dependency to the same type.
      *
-     * @param boolean $sameTypeExtraGrouping
+     * @param boolean $flagState
      */
-    public function setSameTypeExtraGrouping($sameTypeExtraGrouping);
+    public function setSameTypeExtraGrouping($flagState);
 }

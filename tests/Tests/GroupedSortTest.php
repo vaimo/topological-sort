@@ -1,12 +1,15 @@
 <?php
+/**
+ * Copyright © Marc J. Schmidt. All rights reserved.
+ * See LICENSE.txt for license details.
+ */
+namespace Vaimo\TopSort\Tests;
 
-namespace MJS\TopSort\Tests;
-
-use MJS\TopSort\CircularDependencyException;
-use MJS\TopSort\ElementNotFoundException;
-use MJS\TopSort\GroupedTopSortInterface;
-use MJS\TopSort\Implementations\GroupedArraySort;
-use MJS\TopSort\Implementations\GroupedStringSort;
+use Vaimo\TopSort\CircularDependencyException;
+use Vaimo\TopSort\ElementNotFoundException;
+use Vaimo\TopSort\GroupedTopSortInterface;
+use Vaimo\TopSort\Implementations\GroupedArraySort;
+use Vaimo\TopSort\Implementations\GroupedStringSort;
 
 class GroupedSortTest extends \PHPUnit_Framework_TestCase
 {
@@ -21,7 +24,7 @@ class GroupedSortTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider             provideImplementations
-     * @expectedException        \MJS\TopSort\CircularDependencyException
+     * @expectedException        \Vaimo\TopSort\CircularDependencyException
      * @expectedExceptionMessage Circular dependency found: car1->owner1->car1
      *
      * @param GroupedTopSortInterface $sorter
@@ -50,7 +53,7 @@ class GroupedSortTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider             provideImplementations
-     * @expectedException        \MJS\TopSort\ElementNotFoundException
+     * @expectedException        \Vaimo\TopSort\ElementNotFoundException
      * @expectedExceptionMessage Dependency `car2` not found, required by `owner1`
      *
      * @param GroupedTopSortInterface $sorter
@@ -78,7 +81,7 @@ class GroupedSortTest extends \PHPUnit_Framework_TestCase
         try {
             $sorter->sort();
             $this->fail('This must fail');
-        } catch( CircularDependencyException $e ) {
+        } catch (CircularDependencyException $e) {
             $this->assertEquals(array('car1', 'owner1', 'brand1'), $e->getNodes());
             $this->assertEquals('car1', $e->getStart());
             $this->assertEquals('brand1', $e->getEnd());
@@ -154,11 +157,11 @@ class GroupedSortTest extends \PHPUnit_Framework_TestCase
     public function testDependencyOnSameWithActivatedSameTypeGroupingMoreComplex(GroupedTopSortInterface $sorter)
     {
         $sorter->add('car6', 'car');
-        $sorter->add('car1', 'car', ['brand1']);
-        $sorter->add('car2', 'car', ['car3']);
-        $sorter->add('car3', 'car', ['brand2']);
-        $sorter->add('car4', 'car', ['car2']);
-        $sorter->add('car5', 'car', ['brand2']);
+        $sorter->add('car1', 'car', array('brand1'));
+        $sorter->add('car2', 'car', array('car3'));
+        $sorter->add('car3', 'car', array('brand2'));
+        $sorter->add('car4', 'car', array('car2'));
+        $sorter->add('car5', 'car', array('brand2'));
         $sorter->add('brand1', 'brand');
         $sorter->add('brand2', 'brand');
 
@@ -219,7 +222,7 @@ class GroupedSortTest extends \PHPUnit_Framework_TestCase
         try {
             $sorter->sort();
             $this->fail('This must fail');
-        } catch( ElementNotFoundException $e ) {
+        } catch (ElementNotFoundException $e) {
             $this->assertEquals('owner1', $e->getSource());
             $this->assertEquals('car2', $e->getTarget());
         }
@@ -306,11 +309,11 @@ class GroupedSortTest extends \PHPUnit_Framework_TestCase
      */
     public function testImplementationsSimpleDoc(GroupedTopSortInterface $sorter)
     {
-        $sorter->add('car1', 'car', ['owner1', 'brand1']);
+        $sorter->add('car1', 'car', array('owner1', 'brand1'));
         $sorter->add('brand1', 'brand');
         $sorter->add('brand2', 'brand');
-        $sorter->add('owner1', 'user', ['brand1']);
-        $sorter->add('owner2', 'user', ['brand2']);
+        $sorter->add('owner1', 'user', array('brand1'));
+        $sorter->add('owner2', 'user', array('brand2'));
 
         $result = $sorter->sort();
 

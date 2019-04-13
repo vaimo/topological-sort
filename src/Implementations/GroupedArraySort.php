@@ -1,9 +1,12 @@
 <?php
+/**
+ * Copyright © Marc J. Schmidt. All rights reserved.
+ * See LICENSE.txt for license details.
+ */
+namespace Vaimo\TopSort\Implementations;
 
-namespace MJS\TopSort\Implementations;
-
-use MJS\TopSort\ElementNotFoundException;
-use MJS\TopSort\GroupedTopSortInterface;
+use Vaimo\TopSort\ElementNotFoundException;
+use Vaimo\TopSort\GroupedTopSortInterface;
 
 /**
  * Implements grouped topological-sort based on arrays.
@@ -25,22 +28,22 @@ class GroupedArraySort extends BaseImplementation implements GroupedTopSortInter
      *
      * @var bool
      */
-    protected $sameTypeExtraGrouping = false;
+    protected $sameTypeGrouping = false;
 
     /**
      * @return boolean
      */
     public function isSameTypeExtraGrouping()
     {
-        return $this->sameTypeExtraGrouping;
+        return $this->sameTypeGrouping;
     }
 
     /**
-     * @param boolean $sameTypeExtraGrouping
+     * @param boolean $flagState
      */
-    public function setSameTypeExtraGrouping($sameTypeExtraGrouping)
+    public function setSameTypeExtraGrouping($flagState)
     {
-        $this->sameTypeExtraGrouping = $sameTypeExtraGrouping;
+        $this->sameTypeGrouping = $flagState;
     }
 
     /**
@@ -77,7 +80,9 @@ class GroupedArraySort extends BaseImplementation implements GroupedTopSortInter
     }
 
     /**
-     * {@inheritDoc}
+     * @SuppressWarnings(PHPMD.StaticAccess)
+     *
+     * @inheritDoc
      *
      * @return integer level of group in which it has been added
      */
@@ -93,27 +98,25 @@ class GroupedArraySort extends BaseImplementation implements GroupedTopSortInter
 
             $minLevel = -1;
             foreach ($element->dependencies as $dependency) {
-
-                if (isset($this->elements[$dependency])) {
-                    $newParents = $parents;
-                    $addedAtGroupLevel = $this->visit($this->elements[$dependency], $newParents, $element);
-                    if ($addedAtGroupLevel > $minLevel) {
-                        $minLevel = $addedAtGroupLevel;
-                    }
-                    if ($this->isSameTypeExtraGrouping()) {
-                        if ($this->elements[$dependency]->type === $element->type) {
-                            //add a new group
-                            $minLevel = $this->groupLevel;
-                        }
-                    }
-                } else {
+                if (!isset($this->elements[$dependency])) {
                     throw ElementNotFoundException::create($element->id, $dependency);
                 }
+
+                $newParents = $parents;
+                $addedAtGroupLevel = $this->visit($this->elements[$dependency], $newParents, $element);
+                
+                if ($addedAtGroupLevel > $minLevel) {
+                    $minLevel = $addedAtGroupLevel;
+                }
+                
+                if ($this->isSameTypeExtraGrouping()) {
+                    if ($this->elements[$dependency]->type === $element->type) {
+                        //add a new group
+                        $minLevel = $this->groupLevel;
+                    }
+                }
             }
-
-//            print "add {$element->id} ({$element->type}), minLevel:$minLevel  \n";
-//            $this->printState();
-
+            
             $this->injectElement($element, $minLevel);
 
             return $minLevel === -1 ? $element->addedAtLevel : $minLevel;
@@ -128,35 +131,38 @@ class GroupedArraySort extends BaseImplementation implements GroupedTopSortInter
      */
     protected function injectElement($element, $minLevel)
     {
-        if ($group = $this->getFirstGroup($element->type, $minLevel)) {
+        $group = $this->getFirstGroup($element->type, $minLevel);
+        
+        if ($group) {
             $this->addItemAt($group->position + $group->length, $element);
             $group->length++;
-
-//            print "   ->added into group {$group->type}, position: {$group->position}, level: {$group->level}\n";
-
-            //increase all following groups +1
-            $i = $group->position;
+            
+            $position = $group->position;
+            
             foreach ($this->groups as $tempGroup) {
-                if ($tempGroup->position > $i) {
+                if ($tempGroup->position > $position) {
                     $tempGroup->position++;
                 }
             }
+            
             $element->addedAtLevel = $group->level;
             $this->position++;
-        } else {
-            $this->groups[] = (object)array(
-                'type' => $element->type,
-                'level' => $this->groupLevel,
-                'position' => $this->position,
-                'length' => 1
-            );
-            $element->addedAtLevel = $this->groupLevel;
-            $this->sorted[] = $element->id;
-            $this->position++;
-
-//            print "   ->just added. New group {$element->id}, position: {$this->position}, level: {$this->groupLevel}\n";
-            $this->groupLevel++;
+            
+            return;
         }
+
+        $this->groups[] = (object)array(
+            'type' => $element->type,
+            'level' => $this->groupLevel,
+            'position' => $this->position,
+            'length' => 1
+        );
+
+        $element->addedAtLevel = $this->groupLevel;
+        $this->sorted[] = $element->id;
+        $this->position++;
+
+        $this->groupLevel++;
     }
 
     /**
@@ -168,19 +174,8 @@ class GroupedArraySort extends BaseImplementation implements GroupedTopSortInter
         array_splice($this->sorted, $position, 0, $element->id);
     }
 
-//    /**
-//     * @debug
-//     */
-//    protected function printState()
-//    {
-//        print "   ##state# groups: " . count($this->groups) . ", sorted: " . count($this->sorted) . "\n";
-//        foreach ($this->groups as $idx => $group) {
-//            print "   group {$group->type}: $idx, position: {$group->position}, level: {$group->level}\n";
-//        }
-//    }
-
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function getGroups()
     {
@@ -195,7 +190,10 @@ class GroupedArraySort extends BaseImplementation implements GroupedTopSortInter
         $items = $this->sort();
         $groups = array();
         foreach ($this->getGroups() as $group) {
-            $groups[] = array('type' => $group->type, 'elements' => array_slice($items, $group->position, $group->length));
+            $groups[] = array(
+                'type' => $group->type,
+                'elements' => array_slice($items, $group->position, $group->length)
+            );
         }
 
         return $groups;
@@ -209,11 +207,12 @@ class GroupedArraySort extends BaseImplementation implements GroupedTopSortInter
      */
     protected function getFirstGroup($type, $minLevel)
     {
-        $i = $this->groupLevel;
-        while ($i--) {
-            $group = $this->groups[$i];
+        $level = $this->groupLevel;
+        
+        while ($level--) {
+            $group = $this->groups[$level];
 
-            if ($group->type === $type && $i >= $minLevel) {
+            if ($group->type === $type && $level >= $minLevel) {
                 return $group;
             }
         }
@@ -222,7 +221,7 @@ class GroupedArraySort extends BaseImplementation implements GroupedTopSortInter
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function sort()
     {
@@ -230,12 +229,11 @@ class GroupedArraySort extends BaseImplementation implements GroupedTopSortInter
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function doSort()
     {
         if ($this->sorted) {
-            //reset state when already executed
             foreach ($this->elements as $element) {
                 $element->visited = false;
             }

@@ -1,6 +1,9 @@
 <?php
-
-namespace MJS\TopSort;
+/**
+ * Copyright © Marc J. Schmidt. All rights reserved.
+ * See LICENSE.txt for license details.
+ */
+namespace Vaimo\TopSort;
 
 class CircularDependencyException extends \Exception
 {
@@ -19,7 +22,6 @@ class CircularDependencyException extends \Exception
         array_pop($nodes);
         $this->end = $nodes[count($nodes) - 1];
         $this->nodes = $nodes;
-
     }
 
     /**
