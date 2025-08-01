@@ -1,7 +1,7 @@
 {
   "name": "vaimo/topological-sort",
   "type": "library",
-  "description": "High-Performance TopSort/Dependency resolving algorithm (compatibility version to work with 5.3)",
+  "description": "High-Performance TopSort/Dependency resolving algorithm (compatibility version to work with 7.0 - 7.2)",
   "keywords": [
     "topological sort",
     "topsort",
@@ -14,21 +14,14 @@
       "email": "marc@marcjschmidt.de"
     }
   ],
-  "config": {
-    "platform": {
-      "php": "5.3.9"
-    }
-  },
   "require": {
-    "php": ">=7.3"
+    "php": ">=7.0"
   },
   "require-dev": {
-    "phpunit/phpunit": "^9",
-    "symfony/console": "~2.5 || ~3.0 || ~4.0",
-    "squizlabs/php_codesniffer": "^2.9.2",
-    "codeclimate/php-test-reporter": "dev-master",
-    "phpcompatibility/php-compatibility": "^9.1.1",
-    "phpmd/phpmd": "^2.6.0"
+    "phpunit/phpunit": "~6.0 || ~7.0 || ~8.0 || ~9.0",
+    "symfony/console": "~3.0 || ~4.0 || ~5.0",
+    "squizlabs/php_codesniffer": "^2.9.2 || ^3.13",
+    "phpcompatibility/php-compatibility": "^9"
   },
   "scripts-descriptions": {
     "test": "Run tests",
@@ -44,7 +37,11 @@
   },
   "autoload": {
     "psr-4": {
-      "Vaimo\\TopSort\\": "src/",
+      "Vaimo\\TopSort\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
       "Vaimo\\TopSort\\Tests\\": "tests/Tests/"
     }
   },
