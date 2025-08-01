@@ -1,7 +1,7 @@
 # Topological Sort / Dependency resolver in PHP
 
 **NOTE: this is a direct copy of the marcj/topsort with the only difference being the guaranteed compatibility 
-with PHP 5.3**
+with PHP 7.0 - 7.2**
 
 [![Build Status](https://travis-ci.org/marcj/topsort.php.svg)](https://travis-ci.org/marcj/topsort.php)
 [![Code Climate](https://codeclimate.com/github/marcj/topsort.php/badges/gpa.svg?)](https://codeclimate.com/github/marcj/topsort.php)
@@ -82,7 +82,7 @@ To sort PHP objects you can stored its hash instead. `$sorter->add(spl_object_ha
 
 ## Installation
 
-Use composer package: [marcj/topsort)[https://packagist.org/packages/marcj/topsort]
+Use composer package: [marcj/topsort](https://packagist.org/packages/marcj/topsort)
 ```
 {
     "require": {

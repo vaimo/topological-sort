@@ -1,40 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
- Copyright (c) Marc J. Schmidt. All rights reserved.
- See LICENSE.txt for license details.
--->
-<phpunit backupGlobals="false"
-         backupStaticAttributes="false"
-         colors="true"
-         convertErrorsToExceptions="true"
-         convertNoticesToExceptions="true"
-         convertWarningsToExceptions="true"
-         processIsolation="false"
-         stopOnFailure="false"
-         syntaxCheck="false"
-         bootstrap="tests/bootstrap.php"
-    >
-
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd"
+         bootstrap="vendor/autoload.php"
+         executionOrder="depends,defects"
+         forceCoversAnnotation="true"
+         beStrictAboutCoversAnnotation="true"
+         beStrictAboutOutputDuringTests="true"
+         beStrictAboutTodoAnnotatedTests="true"
+         failOnRisky="true"
+         failOnWarning="true"
+         verbose="true">
     <testsuites>
         <testsuite name="TopSort Test Suite">
-            <directory>tests/</directory>
+            <directory suffix="Test.php">tests</directory>
         </testsuite>
     </testsuites>
 
-
-    <logging>
-        <log type="coverage-html" target="./report/" charset="UTF-8"
-             highlight="false" lowUpperBound="35" highLowerBound="70"/>
-        <log type="coverage-text" target="php://stdout" showUncoveredFiles="true"/>
-        <log type="coverage-clover" target="build/logs/clover.xml"/>
-    </logging>
-
-    <filter>
-        <whitelist>
-            <directory>src/</directory>
-            <exclude>
-                <directory>src/Command</directory>
-            </exclude>
-        </whitelist>
-    </filter>
+    <coverage processUncoveredFiles="true">
+        <include>
+            <directory suffix=".php">src</directory>
+        </include>
+        <exclude>
+            <directory suffix=".php">src/Command</directory>
+        </exclude>
+    </coverage>
 </phpunit>

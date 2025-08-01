@@ -20,11 +20,11 @@ class ElementNotFoundException extends \Exception
     /**
      * @param string     $message
      * @param int        $code
-     * @param \Exception $previous
+     * @param \Exception|null $previous
      * @param string     $source
      * @param string     $target
      */
-    public function __construct($message = '', $code = 0, \Exception $previous = null, $source, $target)
+    public function __construct($message, $code, $previous, $source, $target)
     {
         parent::__construct($message, $code, $previous);
         $this->source = $source;
