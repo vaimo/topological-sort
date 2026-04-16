@@ -36,7 +36,7 @@ class BenchmarkCommand extends Command
      * @param OutputInterface $output
      * @return int|void|null
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->testSimpleCount($output);
         $this->testGroupCount($output);
